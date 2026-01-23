@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Item
+from .models import Item, DecisionOverride
 
 # Register your models here.
 
@@ -18,3 +18,10 @@ class ItemAdmin(admin.ModelAdmin):
     search_fields = ('item_code', 'item_name')
     list_filter = ('is_active',)
 
+@admin.register(DecisionOverride)
+class DecisionOverrideAdmin(admin.ModelAdmin):
+    list_display = (
+        "item",
+        "override_value",
+        "created_at",
+    )

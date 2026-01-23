@@ -37,13 +37,24 @@ class Item(models.Model):
     def dss_recomendation(self):
         doi = self.calculate_doi()
         
+        
+        base_low = 30
+        base_high = 60
+        
+        buffer = self.lead_time_days * 1.5
+        low_threshold = base_low + buffer
+        high_threhold = base_high + buffer
+        
+
+        
+        
         if doi is None :
             return "No Data"
         
-        if doi < 30:
-            return "Layak PO"
-        elif 30 <= doi <= 60:
-            return "Monitor"
+        if doi < low_threshold:
+            return "LAYAK PO"
+        elif low_threshold <= doi <= high_threhold:
+            return "MONITOR"
         else:
             return "TUNDA PO"
     
@@ -52,3 +63,13 @@ class Item(models.Model):
     
     def __str__(self):
         return f"{self.item_code} - {self.item_name}"
+
+
+class DecisionOverride(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    override_value = models.CharField(max_length=20)
+    reason = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.item.item_code} - {self.override_value}"
